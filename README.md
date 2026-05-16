@@ -60,7 +60,7 @@ Code → HTTPS → copiar enlace
 Ejemplo:
 
 ```bash
-https://github.com/usuario/proyecto.git
+https://github.com/Marin8971/An-lisis-y-Dise-o-del-Algoritmos.git
 ```
 
 ---
@@ -76,7 +76,7 @@ Terminal → New Terminal
 Ejecutar:
 
 ```bash
-git clone https://github.com/usuario/proyecto.git
+git clone https://github.com/Marin8971/An-lisis-y-Dise-o-del-Algoritmos.git
 ```
 
 ---
