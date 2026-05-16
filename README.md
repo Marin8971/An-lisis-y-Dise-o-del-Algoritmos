@@ -448,18 +448,4 @@ Cuando algo ya funciona:
 
 ---
 
-# 22. Recomendación para proyectos universitarios
 
-## Código
-
-```text
-VS Code + GitHub
-```
-
-## Informes colaborativos
-
-```text
-Overleaf
-```
-
-porque evita muchísimos conflictos en archivos `.tex`.
