@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.10.25)  16 MAY 2026 11:28
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.10.25)  16 MAY 2026 11:41
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -656,7 +656,7 @@ cm/cmmi12.pfb><C:/Program Files/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb
 ><C:/Program Files/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program 
 Files/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
 Output written on "Taller 6 Analisis y Diseño de Algoritmos.pdf" (9 pages, 342
-280 bytes).
+293 bytes).
 PDF statistics:
  189 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
