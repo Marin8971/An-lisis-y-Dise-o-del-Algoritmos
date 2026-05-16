@@ -67,7 +67,7 @@ https://github.com/Marin8971/An-lisis-y-Dise-o-del-Algoritmos.git
 
 ## Paso 2 — Clonar en VS Code
 
-Abrir terminal:
+Abrir terminal (en la carpeta en la que se quiera guardar el repositorio): 
 
 ```text
 Terminal → New Terminal
@@ -76,7 +76,7 @@ Terminal → New Terminal
 Ejecutar:
 
 ```bash
-git clone https://github.com/Marin8971/An-lisis-y-Dise-o-del-Algoritmos.git
+git clone "https://github.com/Marin8971/An-lisis-y-Dise-o-del-Algoritmos.git"
 ```
 
 ---
@@ -84,7 +84,7 @@ git clone https://github.com/Marin8971/An-lisis-y-Dise-o-del-Algoritmos.git
 ## Paso 3 — Entrar a la carpeta
 
 ```bash
-cd proyecto
+cd "An-lisis-y-Dise-o-del-Algoritmos"
 ```
 
 ---
@@ -159,7 +159,7 @@ git commit -m "algoritmo backtracking terminado"
 ```
 
 ```bash
-git commit -m "correccion del informe latex"
+git commit -m "fix: algoritmo iterador modificado"
 ```
 
 ---
@@ -448,18 +448,4 @@ Cuando algo ya funciona:
 
 ---
 
-# 22. Recomendación para proyectos universitarios
 
-## Código
-
-```text
-VS Code + GitHub
-```
-
-## Informes colaborativos
-
-```text
-Overleaf
-```
-
-porque evita muchísimos conflictos en archivos `.tex`.
