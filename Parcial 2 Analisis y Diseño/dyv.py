@@ -1,13 +1,8 @@
 import time
 
-
-#algoritmo divide y venceras (dyv)
-
 def dyv(u, v):
-
     m = len(u)  # Paso Base
     n = len(v)  # Cadena Objetivo
-
 
     memoria = {}     # Guarda costos mínimos
     pasos = {} # Guarda la operación elegida
@@ -26,7 +21,6 @@ def dyv(u, v):
         if (i, j) in memoria:
             return memoria[(i, j)]
 
-
         eliminar = resolver(i - 1, j) + 1
         insertar = resolver(i, j - 1) + 1
         cambiar = resolver(i - 1, j - 1)
@@ -35,9 +29,10 @@ def dyv(u, v):
             cambiar += 1
 
         mejor = min(eliminar, insertar, cambiar) #escogemos el valor minimo
+
         memoria[(i, j)] = mejor
 
-        # Guardar qué operación ganó
+        # Guardar operación elegida
         if mejor == eliminar:
             pasos[(i, j)] = "eliminar"
 
@@ -45,7 +40,6 @@ def dyv(u, v):
             pasos[(i, j)] = "insertar"
 
         else:
-
             if u[i - 1] == v[j - 1]:
                 pasos[(i, j)] = "mantener"
             else:
@@ -53,19 +47,21 @@ def dyv(u, v):
 
         return mejor
 
+    # Medir tiempo
     inicio = time.time()
     distancia = resolver(m, n)
     fin = time.time()
+
     tiempo_ms = (fin - inicio) * 1000
 
-    # Reconstrucion de las operaciones realizadas
+    # Reconstrucción de operaciones
     operaciones = []
 
     i = m
     j = n
 
     while i > 0 or j > 0:
-      
+
       if i == 0: # si la cadena base es vacia, insertamos todos los elementos hasta llegar al objetivo
         operaciones.append(f"Insertar '{v[j-1]}'")
         j -= 1 
@@ -77,41 +73,63 @@ def dyv(u, v):
       operacion = pasos.get((i, j))
 
       match operacion:
-        case "eliminar":
-          operaciones.append(f"Eliminar '{u[i-1]}'")
-          i -= 1
-        case "insertar":
-          operaciones.append(f"Insertar '{v[j-1]}'")
-          j -= 1
-        case "cambiar":
-          operaciones.append(f"Cambiar '{u[i-1]}' por '{v[j-1]}'")
-          i -= 1
-          j -= 1
-        case "mantener":
-          operaciones.append(f"Mantener '{u[i-1]}'")
-          i -= 1
-          j -= 1
 
-    operaciones.reverse() 
-    
-    #descomenta esto para pruebas unitarias
-    #print("Operaciones:\n") 
-#
-    #for op in operaciones:
-    #    print("-", op)
-#
-    #print("\nDistancia:", distancia)
-    #print("Tiempo:", round(tiempo_ms, 3), "ms")
+          case "eliminar":
+            operaciones.append(f"Eliminar '{u[i-1]}'")
+            i -= 1
 
-    return distancia, tiempo_ms
+          case "insertar":
+            operaciones.append(f"Insertar '{v[j-1]}'")
+            j -= 1
+
+          case "cambiar":
+            operaciones.append(f"Cambiar '{u[i-1]}' por '{v[j-1]}'")
+            i -= 1
+            j -= 1
+
+          case "mantener":
+            operaciones.append(f"Mantener '{u[i-1]}'")
+            i -= 1
+            j -= 1
+
+    operaciones.reverse()
+
+    return distancia, tiempo_ms, operaciones
 
 
 
-dyv("hola", "")
 
 
-#los casos de prueba aun estoy viendo para implementarlo como lo hago, pero talves deberia modificar esto un poco
 
+#----------FUNCION AUXILIAR PARA ESCRIBIR--------------------------------------------------
+
+def aux(u, v):
+
+    distancia, tiempo_ms, operaciones = dyv(u, v)
+
+    print("Operaciones:\n")
+
+    for op in operaciones:
+        print("-", op)
+
+    print("\nDistancia:", distancia)
+    print("Tiempo:", round(tiempo_ms, 3), "ms")
+
+
+
+
+#--------------------------------------CASO PARTICULAR----------------
+#en este al usar aux podemos ver el paso a paso que se realizo
+aux("hola", "")
+
+
+
+
+
+
+
+
+#-----------------EVALUACION DE CASOS DE PRUEBA---------------------------------------
 
 
 pruebas = [
@@ -147,9 +165,11 @@ pruebas = [
 
 resultados = []
 
+resultados = []
+
 for cadena1, cadena2 in pruebas:
 
-    distancia, tiempo_ms = dyv(cadena1, cadena2)
+    distancia, tiempo_ms, _ = dyv(cadena1, cadena2)
 
     resultados.append({
         "u": cadena1,
@@ -157,7 +177,6 @@ for cadena1, cadena2 in pruebas:
         "distancia": distancia,
         "tiempo_ms": round(tiempo_ms, 7)
     })
-
 
 print("=" * 70)
 print("RESULTADOS DE PRUEBAS")
