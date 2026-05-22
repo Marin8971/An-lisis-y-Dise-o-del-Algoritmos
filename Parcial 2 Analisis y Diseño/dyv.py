@@ -101,26 +101,86 @@ def dyv(u, v):
 
 
 
+
+
+
+
+
 #----------FUNCION AUXILIAR PARA ESCRIBIR--------------------------------------------------
+#esta funcion es universal para los algoritmos, si te parece comoda usarla
 
-def aux(u, v):
+def aux(algoritmo, u, v):
 
-    distancia, tiempo_ms, operaciones = dyv(u, v)
+    distancia, tiempo_ms, operaciones = algoritmo(u, v)
 
-    print("Operaciones:\n")
+    print("=" * 50)
+    print(f"Algoritmo : {algoritmo.__name__}")
+    print(f"Cadena U  : {u}")
+    print(f"Cadena V  : {v}")
+
+    print("\nOperaciones:\n")
 
     for op in operaciones:
         print("-", op)
 
-    print("\nDistancia:", distancia)
-    print("Tiempo:", round(tiempo_ms, 3), "ms")
+    print("\nDistancia :", distancia)
+    print("Tiempo    :", round(tiempo_ms, 3), "ms")
+    print("=" * 50)
+
+
 
 
 
 
 #--------------------------------------CASO PARTICULAR----------------
 #en este al usar aux podemos ver el paso a paso que se realizo
-aux("hola", "")
+aux(dyv,"hola", "")
+
+
+
+
+
+
+
+
+
+
+#------------------FUNCIONES AXULIAR PARA PRUEBAS---------------------
+#esta es universal si se sigue la misma logica en los 3 algoritmos
+
+
+def test(algoritmo, pruebas):
+
+    resultados = []
+
+    for cadena1, cadena2 in pruebas:
+
+        distancia, tiempo_ms, _ = algoritmo(cadena1, cadena2)
+
+        resultados.append({
+            "u": cadena1,
+            "v": cadena2,
+            "distancia": distancia,
+            "tiempo_ms": round(tiempo_ms, 7)
+
+        })
+
+    print("=" * 70)
+    print(f"RESULTADOS - {algoritmo.__name__.upper()}")
+    print("=" * 70)
+
+    for i, resultado in enumerate(resultados, start=1):
+
+        print(f"\nPrueba #{i}")
+        print("-" * 70)
+
+        print(f"Cadena U   : {resultado['u']}")
+        print(f"Cadena V   : {resultado['v']}")
+        print(f"Distancia  : {resultado['distancia']}")
+        print(f"Tiempo     : {resultado['tiempo_ms']} ms")
+
+    print("\n" + "=" * 70)
+
 
 
 
@@ -130,7 +190,7 @@ aux("hola", "")
 
 
 #-----------------EVALUACION DE CASOS DE PRUEBA---------------------------------------
-
+#esto es provicional, mientras organizo y busco datos que demoren mucho
 
 pruebas = [
     ("gato", "gata"),
@@ -163,33 +223,4 @@ pruebas = [
      "x" * 80)
 ]
 
-resultados = []
-
-resultados = []
-
-for cadena1, cadena2 in pruebas:
-
-    distancia, tiempo_ms, _ = dyv(cadena1, cadena2)
-
-    resultados.append({
-        "u": cadena1,
-        "v": cadena2,
-        "distancia": distancia,
-        "tiempo_ms": round(tiempo_ms, 7)
-    })
-
-print("=" * 70)
-print("RESULTADOS DE PRUEBAS")
-print("=" * 70)
-
-for i, resultado in enumerate(resultados, start=1):
-
-    print(f"\nPrueba #{i}")
-    print("-" * 70)
-
-    print(f"Cadena U   : {resultado['u']}")
-    print(f"Cadena V   : {resultado['v']}")
-    print(f"Distancia  : {resultado['distancia']}")
-    print(f"Tiempo     : {resultado['tiempo_ms']} ms")
-
-print("\n" + "=" * 70)
+test(dyv,pruebas)
