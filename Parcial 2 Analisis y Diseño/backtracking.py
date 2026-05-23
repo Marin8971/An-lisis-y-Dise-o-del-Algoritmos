@@ -110,37 +110,47 @@ aux(backtracking,"gato","gata")
 #esta es universal si se sigue la misma logica en los 3 algoritmos
 
 
+#------------------FUNCIONES AXULIAR PARA PRUEBAS---------------------
+#esta es universal si se sigue la misma logica en los 3 algoritmos
+
+
 def test(algoritmo, pruebas):
-
-    resultados = []
-
-    for cadena1, cadena2 in pruebas:
-
-        distancia, tiempo_ms, _ = algoritmo(cadena1, cadena2)
-
-        resultados.append({
-            "u": cadena1,
-            "v": cadena2,
-            "distancia": distancia,
-            "tiempo_ms": round(tiempo_ms, 7)
-
-        })
 
     print("=" * 70)
     print(f"RESULTADOS - {algoritmo.__name__.upper()}")
     print("=" * 70)
 
-    for i, resultado in enumerate(resultados, start=1):
+    for i, (cadena1, cadena2) in enumerate(pruebas, start=1):
+
+        distancia, tiempo_ms, _ = algoritmo(cadena1, cadena2)
 
         print(f"\nPrueba #{i}")
         print("-" * 70)
 
-        print(f"Cadena U   : {resultado['u']}")
-        print(f"Cadena V   : {resultado['v']}")
-        print(f"Distancia  : {resultado['distancia']}")
-        print(f"Tiempo     : {resultado['tiempo_ms']} ms")
+        print(f"Cadena U   : {cadena1}")
+        print(f"Cadena V   : {cadena2}")
+
+        print(f"Distancia  : {distancia}")
+        print(f"Tiempo     : {formatear_tiempo(tiempo_ms)}")
 
     print("\n" + "=" * 70)
+    
+    
+def formatear_tiempo(tiempo_ms):
+
+
+    if tiempo_ms < 1000:
+        return f"{round(tiempo_ms, 4)} ms"
+
+    elif tiempo_ms < 60000:
+        segundos = tiempo_ms / 1000
+        return f"{round(segundos, 4)} s"
+
+
+    else:
+        minutos = int(tiempo_ms // 60000)
+        segundos = (tiempo_ms % 60000) / 1000
+        return f"{minutos} min {round(segundos, 2)} s"
 
 
 

@@ -1,98 +1,57 @@
 import time
 
+import time
+
 def dyv(u, v):
-    m = len(u)  # Paso Base
-    n = len(v)  # Cadena Objetivo
+    # u = cadena base
+    # v = cadena objetivo
+    def resolver(pos_u, pos_v):
 
-    memoria = {}     # Guarda costos mínimos
-    pasos = {} # Guarda la operación elegida
+        if pos_u == 0: # si la cadena base es vacia, insetamos los valores faltantes
+            operaciones = [f"Insertar '{v[k]}'"for k in range(pos_v)]
+            return pos_v, operaciones
 
-    def resolver(i, j):
 
-        # Si u quedó vacía
-        if i == 0:
-            return j
+        if pos_v == 0: # si la cadena objetivo es vacia, eliminamos todos los caracteres de la cadeba base
+            operaciones = [ f"Eliminar '{u[k]}'" for k in range(pos_u)]
+            return pos_u, operaciones
 
-        # Si v quedó vacía
-        if j == 0:
-            return i
+        # eliminacion de caracteres
+        costo_eliminar, operaciones_eliminar = resolver(pos_u - 1, pos_v)
+        costo_eliminar += 1
+        operaciones_eliminar = (operaciones_eliminar + [f"Eliminar '{u[pos_u - 1]}'"])
 
-        # Si ya se calculó
-        if (i, j) in memoria:
-            return memoria[(i, j)]
+        # Insertacion de Caracteres
+        costo_insertar, operaciones_insertar = resolver(pos_u, pos_v - 1)
+        costo_insertar += 1
+        operaciones_insertar = (operaciones_insertar+ [f"Insertar '{v[pos_v - 1]}'"])
 
-        eliminar = resolver(i - 1, j) + 1
-        insertar = resolver(i, j - 1) + 1
-        cambiar = resolver(i - 1, j - 1)
+        # Cambio o mantenimiento de caracteres
+        costo_cambiar, operaciones_cambiar = resolver(pos_u - 1, pos_v - 1)
 
-        if u[i - 1] != v[j - 1]:
-            cambiar += 1
+        if u[pos_u - 1] != v[pos_v - 1]: # si los caracteres son diferentes se realiza un cambio
+          costo_cambiar += 1
+          operaciones_cambiar = ( operaciones_cambiar + [f"Se cambio "f"'{u[pos_u - 1]}' "f"por "f"'{v[pos_v - 1]}'"])
 
-        mejor = min(eliminar, insertar, cambiar) #escogemos el valor minimo
+        else: # si son iguales se mantiene el cambio y continua
+          operaciones_cambiar = ( operaciones_cambiar + [f"Mantener '{u[pos_u - 1]}'"])
 
-        memoria[(i, j)] = mejor
+        # elecion de la mejor opcion
+        if (costo_eliminar <= costo_insertar and costo_eliminar <= costo_cambiar):
+            return costo_eliminar, operaciones_eliminar
 
-        # Guardar operación elegida
-        if mejor == eliminar:
-            pasos[(i, j)] = "eliminar"
-
-        elif mejor == insertar:
-            pasos[(i, j)] = "insertar"
+        elif (costo_insertar <= costo_eliminar and costo_insertar <= costo_cambiar):
+            return costo_insertar, operaciones_insertar
 
         else:
-            if u[i - 1] == v[j - 1]:
-                pasos[(i, j)] = "mantener"
-            else:
-                pasos[(i, j)] = "cambiar"
+            return costo_cambiar, operaciones_cambiar
 
-        return mejor
 
-    # Medir tiempo
+
     inicio = time.time()
-    distancia = resolver(m, n)
+    distancia, operaciones = resolver(len(u),len(v))
     fin = time.time()
-
     tiempo_ms = (fin - inicio) * 1000
-
-    # Reconstrucción de operaciones
-    operaciones = []
-
-    i = m
-    j = n
-
-    while i > 0 or j > 0:
-
-      if i == 0: # si la cadena base es vacia, insertamos todos los elementos hasta llegar al objetivo
-        operaciones.append(f"Insertar '{v[j-1]}'")
-        j -= 1 
-        continue # volvemos al inicio (while)
-      if j == 0: # si la cadena objetivo es vacia, elimanos 1 a 1 los elemento de la cadeba base
-        operaciones.append(f"Eliminar '{u[i-1]}'")
-        i -= 1
-        continue #volvemos al inicio (while)
-      operacion = pasos.get((i, j))
-
-      match operacion:
-
-          case "eliminar":
-            operaciones.append(f"Eliminar '{u[i-1]}'")
-            i -= 1
-
-          case "insertar":
-            operaciones.append(f"Insertar '{v[j-1]}'")
-            j -= 1
-
-          case "cambiar":
-            operaciones.append(f"Cambiar '{u[i-1]}' por '{v[j-1]}'")
-            i -= 1
-            j -= 1
-
-          case "mantener":
-            operaciones.append(f"Mantener '{u[i-1]}'")
-            i -= 1
-            j -= 1
-
-    operaciones.reverse()
 
     return distancia, tiempo_ms, operaciones
 
@@ -149,38 +108,47 @@ aux(dyv,"hola", "")
 #esta es universal si se sigue la misma logica en los 3 algoritmos
 
 
+#------------------FUNCIONES AXULIAR PARA PRUEBAS---------------------
+#esta es universal si se sigue la misma logica en los 3 algoritmos
+
+
 def test(algoritmo, pruebas):
-
-    resultados = []
-
-    for cadena1, cadena2 in pruebas:
-
-        distancia, tiempo_ms, _ = algoritmo(cadena1, cadena2)
-
-        resultados.append({
-            "u": cadena1,
-            "v": cadena2,
-            "distancia": distancia,
-            "tiempo_ms": round(tiempo_ms, 7)
-
-        })
 
     print("=" * 70)
     print(f"RESULTADOS - {algoritmo.__name__.upper()}")
     print("=" * 70)
 
-    for i, resultado in enumerate(resultados, start=1):
+    for i, (cadena1, cadena2) in enumerate(pruebas, start=1):
+
+        distancia, tiempo_ms, _ = algoritmo(cadena1, cadena2)
 
         print(f"\nPrueba #{i}")
         print("-" * 70)
 
-        print(f"Cadena U   : {resultado['u']}")
-        print(f"Cadena V   : {resultado['v']}")
-        print(f"Distancia  : {resultado['distancia']}")
-        print(f"Tiempo     : {resultado['tiempo_ms']} ms")
+        print(f"Cadena U   : {cadena1}")
+        print(f"Cadena V   : {cadena2}")
+
+        print(f"Distancia  : {distancia}")
+        print(f"Tiempo     : {formatear_tiempo(tiempo_ms)}")
 
     print("\n" + "=" * 70)
+    
+    
+def formatear_tiempo(tiempo_ms):
 
+
+    if tiempo_ms < 1000:
+        return f"{round(tiempo_ms, 4)} ms"
+
+    elif tiempo_ms < 60000:
+        segundos = tiempo_ms / 1000
+        return f"{round(segundos, 4)} s"
+
+
+    else:
+        minutos = int(tiempo_ms // 60000)
+        segundos = (tiempo_ms % 60000) / 1000
+        return f"{minutos} min {round(segundos, 2)} s"
 
 
 
@@ -193,34 +161,27 @@ def test(algoritmo, pruebas):
 #esto es provicional, mientras organizo y busco datos que demoren mucho
 
 pruebas = [
+
+    # Caso pequeño simple
     ("gato", "gata"),
 
+    # Caracteres invertidos
     ("abcdefghij", "jihgfedcba"),
 
+    # Palabras medianas con muchos cambios
     ("murcielago", "electroencefalografista"),
 
-    ("", "supercalifragilisticoespialidoso"),
+    # Frases con inserciones y reemplazos
+    (
+        "la inteligencia artificial cambiara el mundo",
+        "la inteligencia humana cambiara profundamente el futuro"
+    ),
 
-    ("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-     "aaaaabaaaaacaaaaadaaaaaeaaaaaf"),
-
-
-    ("@#&*!?/$%abcdef",
-     "abcdef@#&*!?/$%"),
-
-
-    ("la inteligencia artificial cambiara el mundo",
-     "la inteligencia humana cambiara profundamente el futuro"),
-
-
-    ("Lorem ipsum dolor sit amet consectetur adipiscing elit",
-     "Dolor sit amet lorem ipsum adipiscing elit consectetur"),
-
-    ("a" * 100,
-     "a" * 99 + "b"),
-
-    ("z" * 80,
-     "x" * 80)
+    # Caracteres especiales y reordenamiento
+    (
+        "@#&*!?/$%abcdef",
+        "abcdef@#&*!?/$%"
+    )
 ]
 
 test(dyv,pruebas)
