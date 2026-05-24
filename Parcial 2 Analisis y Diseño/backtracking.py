@@ -1,6 +1,3 @@
-import time
-
-
 def backtracking(u, v):
 
     mejor_distancia = [float("inf")]
@@ -63,12 +60,8 @@ def backtracking(u, v):
         backtracking(i, j - 1, costo + 1, camino)
         camino.pop()
 
-    inicio = time.time()
-    backtracking(len(u), len(v), 0, [])
-    fin = time.time()
-    tiempo_ms = (fin - inicio) * 1000
-    mejor_camino.reverse()
 
-    return mejor_distancia[0], tiempo_ms, mejor_camino
+
+    return mejor_distancia[0], mejor_camino
 
 

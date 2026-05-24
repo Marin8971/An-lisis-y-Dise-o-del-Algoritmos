@@ -1,5 +1,3 @@
-import time
-
 def dyv(u, v):
     # u = cadena base
     # v = cadena objetivo
@@ -54,15 +52,8 @@ def dyv(u, v):
         else:
             return costo_cambiar, operaciones_cambiar
 
-    # =========================================================
-    # Medición de tiempo
-    # =========================================================
-
-    inicio = time.time()
 
     distancia, operaciones = resolver(len(u),len(v))
 
-    fin = time.time()
-    tiempo_ms = (fin - inicio) * 1000
 
-    return distancia, tiempo_ms, operaciones
+    return distancia, operaciones

@@ -1,5 +1,3 @@
-import time 
-
 def tabulacion(u: str, v: str):
     n = len(u)
     m = len(v)
@@ -9,8 +7,6 @@ def tabulacion(u: str, v: str):
 
     # matriz de pasos 
     pasos = [[""] * (m+1) for _ in range(n+1)]
-
-    inicio = time.time()
 
     # inicializacion de la matriz
     for i in range(n+1):
@@ -45,8 +41,6 @@ def tabulacion(u: str, v: str):
                 pasos[i][j] = f"insertar"
 
 
-    fin = time.time()
-    tiempo_ms = (fin - inicio) * 1000
 
     # reconstruccion de operaciones
     operaciones = []
@@ -86,5 +80,5 @@ def tabulacion(u: str, v: str):
 
     operaciones.reverse()
 
-    return dpm[n][m], tiempo_ms, operaciones
+    return dpm[n][m], operaciones
 

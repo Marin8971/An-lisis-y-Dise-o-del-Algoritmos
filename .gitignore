@@ -1,6 +1,18 @@
+# para python
 __pycache__/
 *.pyc
 .venv/
 .ipynb_checkpoints/
 *.log
 .DS_Store
+
+# para latex
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz

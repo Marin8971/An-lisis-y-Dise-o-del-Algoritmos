@@ -49,10 +49,6 @@ def fuerza_bruta(u: str, v: str):
         exploracion(i, j-1, costo+1, camino)
         camino.pop()
 
-    inicio = time.time()
-    exploracion(len(u), len(v), 0, [])
-    fin = time.time()
-    tiempo_ms = (fin - inicio) * 1000
 
-    return mejor_distancia[0], tiempo_ms, mejor_camino
+    return mejor_distancia[0], mejor_camino
 

@@ -1,0 +1,288 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{geometry}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{float}
+\usepackage{listings}
+
+\geometry{margin=2cm}
+\setlength{\parskip}{0.8em}
+\setlength{\parindent}{0pt}
+
+\lstset{
+	basicstyle=\ttfamily\small,
+	keywordstyle=\color{blue},
+	commentstyle=\color{green!50!black},
+	stringstyle=\color{red},
+	showstringspaces=false,
+	breaklines=true,
+	frame=single
+}
+
+\begin{document}
+
+\begin{flushleft}
+	\begin{minipage}{0.8\textwidth}
+		\begin{minipage}[c]{0.50\textwidth}
+			\includegraphics[width=\textwidth]{unalB.pdf}
+		\end{minipage}
+		\hspace{1em}%
+		\raisebox{-4.7em}{\textcolor{gray}{\vrule width 1pt height 10em}}%
+		\hspace{1.9em}%
+		\begin{minipage}[c]{0.75\textwidth}
+			\raggedright
+			Sede Manizales\\
+			Sustentacion 2do Parcial, Analisis y Diseno de Algoritmos
+			\\[0.3em]
+			\textbf{Integrantes:}\\
+			Santiago Marin Giraldo\\
+			Tomas Henao Bonilla
+		\end{minipage}
+	\end{minipage}
+\end{flushleft}
+
+\section{Planteamiento del problema}
+
+Dadas dos cadenas \(u\) y \(v\), se busca transformar \(u\) en \(v\) con el menor numero de operaciones posibles. Las operaciones permitidas son: eliminar un caracter, insertar un caracter o cambiar un caracter. El algoritmo debe devolver la distancia minima y la secuencia de operaciones.
+
+\section{Algoritmos}
+\subsection*{Algoritmo de Fuerza Bruta}
+
+La fuerza bruta explora todas las secuencias posibles de operaciones hasta transformar \(u\) en \(v\). Se evalúa cada camino y se conserva el de menor costo.
+
+\begin{algorithm}[H]
+\caption{Fuerza bruta }
+\begin{algorithmic}[1]
+\Function{fuerza\_bruta}{$u, v$}
+    \State mejor $\gets \infty$, mejor\_camino $\gets [\ ]$
+    \Function{Explorar}{$i, j, costo, camino$}
+        \If{$i = 0$ \textbf{y} $j = 0$}
+            \State Actualizar mejor si $costo$ es menor
+            \State \Return
+        \EndIf
+        \If{$i = 0$}
+            \State Insertar los $j$ caracteres restantes de $v$
+            \State \Return
+        \EndIf
+        \If{$j = 0$}
+            \State Eliminar los $i$ caracteres restantes de $u$
+            \State \Return
+        \EndIf
+        \State Probar cambiar o mantener el ultimo caracter
+        \State Probar eliminar el ultimo caracter de $u$
+        \State Probar insertar el ultimo caracter de $v$
+    \EndFunction
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\subsection*{Complejidad}
+En el peor caso explora un arbol de ramificacion 3, con profundidad aproximada \(|u|+|v|\). Por tanto:
+$$T(n) = O(3^{|u|+|v|}), \quad S(n) = O(|u|+|v|)$$
+
+\subsection*{Algoritmo Backtracking}
+
+El backtracking parte de la fuerza bruta, pero incorpora poda: si el costo actual ya es mayor o igual que la mejor distancia encontrada, se corta ese camino.
+
+\begin{algorithm}[H]
+\caption{Backtracking }
+\begin{algorithmic}[1]
+\Function{backtracking}{$u, v$}
+    \State mejor $\gets \infty$, mejor\_camino $\gets [\ ]$
+    \Function{BT}{$i, j, costo, camino$}
+        \If{$costo \ge$ mejor}
+            \State \Return
+        \EndIf
+        \If{$i = 0$ \textbf{y} $j = 0$}
+            \State Actualizar mejor y mejor\_camino
+            \State \Return
+        \EndIf
+        \If{$i = 0$} \State Insertar restantes; \Return \EndIf
+        \If{$j = 0$} \State Eliminar restantes; \Return \EndIf
+        \State Probar cambiar o mantener
+        \State Probar eliminar
+        \State Probar insertar
+    \EndFunction
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\subsection*{Complejidad}
+En el peor caso mantiene el mismo orden exponencial que fuerza bruta, pero con mejor desempeno en practica gracias a la poda.
+$$T(n) = O(3^{|u|+|v|}), \quad S(n) = O(|u|+|v|)$$
+
+\subsection*{Algoritmo Divide y Venceras}
+
+Se define un subproblema \(resolver(i,j)\) que calcula la distancia minima entre los primeros \(i\) caracteres de \(u\) y los primeros \(j\) caracteres de \(v\). En cada llamada se exploran las tres operaciones posibles y se escoge la de menor costo. La implementacion recursiva devuelve tambien la secuencia de operaciones.
+
+\begin{algorithm}[H]
+\caption{Divide y venceras }
+\begin{algorithmic}[1]
+\Function{dyv}{$u, v$}
+    \Function{Resolver}{$i, j$}
+        \If{$i = 0$}
+            \State \Return $j$, lista de inserciones
+        \EndIf
+        \If{$j = 0$}
+            \State \Return $i$, lista de eliminaciones
+        \EndIf
+        \State $(c_1, ops_1) \gets$ Resolver$(i-1, j)$; $c_1 \gets c_1 + 1$
+        \State $(c_2, ops_2) \gets$ Resolver$(i, j-1)$; $c_2 \gets c_2 + 1$
+        \State $(c_3, ops_3) \gets$ Resolver$(i-1, j-1)$
+        \If{$u[i-1] \ne v[j-1]$} $c_3 \gets c_3 + 1$ \EndIf
+        \State \Return la opcion con menor costo
+    \EndFunction
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\subsection*{Complejidad}
+En el peor caos, explora un arbol de llamadas exponencial.
+$$T(n) = O(3^{|u|+|v|}), \quad S(n) = O(|u|+|v|)$$
+
+\newpage
+\subsection*{Algoritmo de Programación Dinámica con Tabulación}
+
+Se construye una tabla \(dp[i][j]\) con la distancia minima entre los primeros \(i\) caracteres de \(u\) y los primeros \(j\) caracteres de \(v\). La recurrencia es:
+$$dp[i][j] = \min\left( dp[i-1][j] + 1,\ dp[i][j-1] + 1,\ dp[i-1][j-1] + \delta \right)$$
+donde \(\delta = 0\) si los caracteres son iguales y \(\delta = 1\) si son diferentes. Ademas se guarda el paso para reconstruir las operaciones.
+
+\begin{algorithm}[H]
+\caption{Tabulacion }
+\begin{algorithmic}[1]
+\Function{tabulacion}{$u, v$}
+    \State Inicializar $dp$ y $pasos$
+    \State Llenar $dp$ con la recurrencia
+    \State Reconstruir operaciones desde $(|u|,|v|)$ usando $pasos$
+    \State \Return $dp[|u|][|v|]$, operaciones
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\subsection*{Complejidad}
+$$T(n) = O(|u|\cdot|v|), \quad S(n) = O(|u|\cdot|v|)$$
+
+\newpage
+\section{Pruebas}
+\subsection*{Pruebas unitarias y validacion de correctitud}
+
+La correctitud se verifico mediante pruebas unitarias comparando la distancia obtenida por cada algoritmo sobre un conjunto de casos deterministas y casos frontera. Se utilizo el siguiente procedimiento:
+
+\begin{lstlisting}[language=Python]
+def evaluar_correctitud(algoritmo, casos):
+    resultados = []
+    for u, v in casos:
+        distancias = {}
+        for nombre, func in algoritmo.items():
+            distancia, operaciones = func(u, v)
+            distancias[nombre] = distancia
+        resultados.append((u, v, distancias))
+
+    return resultados
+\end{lstlisting}
+
+Los principales casos deterministas evaluados fueron:
+
+\begin{center}
+    \begin{tabular}{|c|c|c|}
+        \hline
+        Cadena Base & Cadena Objetivo & Distancia Obtenida \\
+        \hline
+        vacio & vacio & 0 \\
+        \hline
+        hola & hola & 0 \\
+        \hline
+        gato & gata & 1 \\
+        \hline
+        abba & abcbc & 2 \\
+        \hline
+        mesa & vacio & 4 \\
+        \hline
+        vacio & casa & 4 \\
+        \hline
+    \end{tabular}
+\end{center}
+
+Para todos los casos evaluados, las cuatro implementaciones produjeron la misma distancia minima. Lo cual prueba la correctitud de las implementaciones y su consistencia entre sí.
+
+\newpage
+\subsection*{Verificacion de operaciones}
+
+Ademas de comparar la distancia, se revisaron las secuencias de operaciones generadas para transformar una cadena en otra. Se uso el siguiente procedimiento:
+
+\begin{lstlisting}[language=Python]
+u, v = "gato", "pato"
+
+for nombre, funcion in algoritmos.items():
+    distancia, operaciones = funcion(u, v)
+    print(nombre, "->", distancia)
+    for operacion in operaciones:
+        print("-", operacion)
+    print()
+\end{lstlisting}
+
+Para el ejemplo \(\texttt{gato} \rightarrow \texttt{pato}\), todas las implementaciones detectaron que la operacion minima es cambiar \(\texttt{g}\) por \(\texttt{p}\), manteniendo los demas caracteres.
+
+\subsection*{Rendimiento experimental}
+
+Se realizo una comparacion de tiempos promedio para entradas de tamaños pequeños, usando cadenas aleatorias con alfabeto \(\{a,b,c,d\}\). Para cada tamano \(n\) se midio el tiempo de ejecucion de cada algoritmo con dos repeticiones y se reporto el promedio.
+
+\begin{lstlisting}[language=Python]
+def medir_tiempo(fn, u, v, repeticiones=2):
+    tiempos = []
+    for _ in range(repeticiones):
+        inicio = time.time()
+        fn(u, v)
+        fin = time.time()
+        tiempos.append((fin - inicio) * 1000)
+    return statistics.mean(tiempos)
+
+tamanos = [2, 3, 4, 5]
+for n in tamanos:
+    u = generar_cadena(n)
+    v = generar_cadena(n)
+    for nombre, fn in algoritmos.items():
+        prom_ms = medir_tiempo(fn, u, v)
+\end{lstlisting}
+
+\newpage
+Los resultados muestran el comportamiento esperado: fuerza bruta y divide y venceras crecen rapidamente, backtracking mejora con la poda pero sigue siendo exponencial, y la tabulacion mantiene un crecimiento mucho mas controlado.
+
+\begin{center}
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        $n$ & Fuerza Bruta (ms) & Backtracking (ms) & DyV (ms) & Tabulacion (ms) \\
+        \hline
+        2 & 0.0218 & 0.0035 & 0.0061 & 0.0039 \\
+        \hline
+        3 & 0.0246 & 0.0075 & 0.0230 & 0.0044 \\
+        \hline
+        4 & 0.1155 & 0.0105 & 0.1096 & 0.0055 \\
+        \hline
+        5 & 0.6119 & 0.0570 & 0.5695 & 0.0069 \\
+        \hline
+    \end{tabular}
+\end{center}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{comparacion_tiempos.png}
+    \caption{Comparacion de tiempos promedio por tamano de entrada}
+\end{figure}
+
+\section{Conclusiones}
+
+\begin{itemize}
+    \item La fuerza bruta garantiza optimalidad pero es inviable para entradas medianas.
+    \item El backtracking mejora en practica gracias a la poda, aunque el peor caso sigue siendo exponencial.
+    \item La programacion dinamica con tabulacion ofrece el mejor equilibrio entre costo y tamano de entrada.
+    \item Las pruebas unitarias confirmaron la consistencia de distancias y operaciones.
+\end{itemize}
+
+\end{document}
