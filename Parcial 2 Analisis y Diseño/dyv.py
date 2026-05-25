@@ -35,7 +35,7 @@ def dyv(u, v):
 
         if u[pos_u - 1] != v[pos_v - 1]: # si los caracteres son diferentes se realiza un cambio
           costo_cambiar += 1
-          operaciones_cambiar = ( operaciones_cambiar + [f"Se cambio "f"'{u[pos_u - 1]}' "f"por "f"'{v[pos_v - 1]}'"])
+          operaciones_cambiar = ( operaciones_cambiar + [f"cambiar "f"'{u[pos_u - 1]}' "f"por "f"'{v[pos_v - 1]}'"])
 
         else: # si son iguales se mantiene el cambio y continua
           operaciones_cambiar = ( operaciones_cambiar + [f"Mantener '{u[pos_u - 1]}'"])

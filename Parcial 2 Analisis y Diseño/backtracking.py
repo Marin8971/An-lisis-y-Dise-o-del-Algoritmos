@@ -61,7 +61,8 @@ def backtracking(u, v):
         camino.pop()
 
 
-
+    backtracking(len(u), len(v), 0, [])
+    mejor_camino.reverse()
     return mejor_distancia[0], mejor_camino
 
 
