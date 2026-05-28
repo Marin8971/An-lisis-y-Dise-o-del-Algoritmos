@@ -1,5 +1,3 @@
-import time 
-
 def fuerza_bruta(u: str, v: str):
     mejor_distancia = [float('inf')]
     mejor_camino = []
