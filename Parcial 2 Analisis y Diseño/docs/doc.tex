@@ -3,6 +3,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[spanish]{babel}
+\usepackage[none]{hyphenat}
 \usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{geometry}
@@ -28,36 +29,51 @@
 \begin{document}
 
 \begin{flushleft}
-	\begin{minipage}{0.8\textwidth}
-		\begin{minipage}[c]{0.50\textwidth}
-			\includegraphics[width=\textwidth]{unalB.pdf}
+		\begin{minipage}{0.8\textwidth}
+			\begin{minipage}[c]{0.50\textwidth}
+				\includegraphics[width=\textwidth]{img/unalB.pdf}
+			\end{minipage}
+			\hspace{1em}%
+			\raisebox{-4.7em}{\textcolor{gray}{\vrule width 1pt height 10em}}%
+			\hspace{1.9em}%
+			\begin{minipage}[c]{0.75\textwidth}
+				\raggedright
+				Sede Manizales\\
+				Sustentación 2do Parcial, Análisis y Diseño de Algoritmos
+				\\[0.3em]
+				\textbf{Integrantes:}\\
+				Santiago Marín Giraldo\\
+				Tomás Henao Bonilla
+			\end{minipage}
 		\end{minipage}
-		\hspace{1em}%
-		\raisebox{-4.7em}{\textcolor{gray}{\vrule width 1pt height 10em}}%
-		\hspace{1.9em}%
-		\begin{minipage}[c]{0.75\textwidth}
-			\raggedright
-			Sede Manizales\\
-			Sustentacion 2do Parcial, Analisis y Diseno de Algoritmos
-			\\[0.3em]
-			\textbf{Integrantes:}\\
-			Santiago Marin Giraldo\\
-			Tomas Henao Bonilla
-		\end{minipage}
-	\end{minipage}
-\end{flushleft}
+	\end{flushleft}
 
 \section{Planteamiento del problema}
 
-Dadas dos cadenas \(u\) y \(v\), se busca transformar \(u\) en \(v\) con el menor numero de operaciones posibles. Las operaciones permitidas son: eliminar un caracter, insertar un caracter o cambiar un caracter. El algoritmo debe devolver la distancia minima y la secuencia de operaciones.
+Dadas dos cadenas \(u\) y \(v\), se busca transformar \(u\) en \(v\) con el menor número de operaciones posibles. Las operaciones permitidas son: eliminar un carácter, insertar un carácter o cambiar un carácter. El algoritmo debe devolver la distancia mínima y la secuencia de operaciones.
 
 \section{Algoritmos}
+
+Para resolver el problema de distancia de edición se implementaron diferentes estrategias algorítmicas, con el objetivo de comparar su comportamiento teórico y experimental. Las soluciones desarrolladas fueron fuerza bruta, divide y vencerás y programación dinámica con tabulación.
+
 \subsection*{Algoritmo de Fuerza Bruta}
 
-La fuerza bruta explora todas las secuencias posibles de operaciones hasta transformar \(u\) en \(v\). Se evalúa cada camino y se conserva el de menor costo.
+El algoritmo de fuerza bruta explora recursivamente todas las combinaciones posibles de operaciones para transformar una cadena en otra. 
+Desde una posición \((i,j)\), el algoritmo genera hasta tres caminos distintos:
+
+\begin{itemize}
+    \item Mantener o cambiar un carácter.
+    \item Eliminar un carácter.
+    \item Insertar un carácter.
+\end{itemize}
+
+Durante la exploración se construye la secuencia de operaciones utilizando \textbf{append/pop}, lo que permite reutilizar la misma lista y evitar copias innecesarias de memoria.
+
+Cuando se alcanza el caso base \((0,0)\), el algoritmo compara el costo obtenido con la mejor solución encontrada hasta el momento y, si es menor, actualiza la solución óptima.
+
 
 \begin{algorithm}[H]
-\caption{Fuerza bruta }
+\caption{Fuerza bruta}
 \begin{algorithmic}[1]
 \Function{fuerza\_bruta}{$u, v$}
     \State mejor $\gets \infty$, mejor\_camino $\gets [\ ]$
@@ -74,55 +90,67 @@ La fuerza bruta explora todas las secuencias posibles de operaciones hasta trans
             \State Eliminar los $i$ caracteres restantes de $u$
             \State \Return
         \EndIf
-        \State Probar cambiar o mantener el ultimo caracter
-        \State Probar eliminar el ultimo caracter de $u$
-        \State Probar insertar el ultimo caracter de $v$
+        \State Probar cambiar o mantener el último carácter
+        \State Probar eliminar el último carácter de $u$
+        \State Probar insertar el último carácter de $v$
     \EndFunction
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
 
 \subsection*{Complejidad}
-En el peor caso explora un arbol de ramificacion 3, con profundidad aproximada \(|u|+|v|\). Por tanto:
-$$T(n) = O(3^{|u|+|v|}), \quad S(n) = O(|u|+|v|)$$
 
-\subsection*{Algoritmo Backtracking}
+En el peor caso, el algoritmo de fuerza bruta explora todas las secuencias posibles de operaciones para transformar una cadena en otra, en cada llamada recursiva se generan hasta tres nuevos caminos:
+\begin{enumerate}
+    \item Eliminar un carácter.
+    \item Insertar un carácter.
+    \item Cambiar o mantener un carácter.
+\end{enumerate}
 
-El backtracking parte de la fuerza bruta, pero incorpora poda: si el costo actual ya es mayor o igual que la mejor distancia encontrada, se corta ese camino.
+Por ejemplo, una llamada como:
+$$explorar(i,j)$$
+
+Esto produce tres nuevos subproblemas:
+
+%El orden de estos es Eliminar --> insertar --> cambiar
+%por si pregunta el profe, esos significa casa sub arbol nuevo y por que camino va
+$$explorar(i-1,j) \qquad explorar(i,j-1) \qquad explorar(i-1,j-1)$$
+
+Esto produce un árbol recursivo con factor de ramificación 3; Además, en cada llamada al menos uno de los parámetros disminuye, por lo que la profundidad máxima del árbol es aproximadamente:
+$$|u| + |v|$$
+
+Por lo tanto, el número total de llamadas crece aproximadamente como:
+$$3^{|u|+|v|}$$
+
+y la complejidad temporal en el peor caso es:
+$$T(n)=O(3^{|u|+|v|})$$
+
+Respecto a la complejidad espacial, el algoritmo utiliza memoria principalmente debido a la pila de llamadas recursivas.
+
+Como la profundidad máxima del árbol es:
+$$|u| + |v|$$
+
+el espacio utilizado es:
+$$S(n)=O(|u|+|v|)$$
+
+\subsection*{Algoritmo Divide y Vencerás}
+
+El algoritmo de Divide y Vencerás resuelve el problema mediante una descomposición recursiva en subproblemas más pequeños.
+Para cada posición \((i,j)\), se consideran tres posibles operaciones:
+
+\begin{itemize}
+    \item Eliminar un carácter.
+    \item Insertar un carácter.
+    \item Cambiar o mantener un carácter.
+\end{itemize}
+
+La función calcula recursivamente el costo de cada opción, selecciona la de menor valor y reconstruye la secuencia de operaciones correspondiente.
+
+Sin embargo, esta implementación no almacena resultados intermedios, por lo que muchos subproblemas se recalculan múltiples veces. Esto incrementa considerablemente el costo computacional para cadenas de gran tamaño.
+
 
 \begin{algorithm}[H]
-\caption{Backtracking }
-\begin{algorithmic}[1]
-\Function{backtracking}{$u, v$}
-    \State mejor $\gets \infty$, mejor\_camino $\gets [\ ]$
-    \Function{BT}{$i, j, costo, camino$}
-        \If{$costo \ge$ mejor}
-            \State \Return
-        \EndIf
-        \If{$i = 0$ \textbf{y} $j = 0$}
-            \State Actualizar mejor y mejor\_camino
-            \State \Return
-        \EndIf
-        \If{$i = 0$} \State Insertar restantes; \Return \EndIf
-        \If{$j = 0$} \State Eliminar restantes; \Return \EndIf
-        \State Probar cambiar o mantener
-        \State Probar eliminar
-        \State Probar insertar
-    \EndFunction
-\EndFunction
-\end{algorithmic}
-\end{algorithm}
-
-\subsection*{Complejidad}
-En el peor caso mantiene el mismo orden exponencial que fuerza bruta, pero con mejor desempeno en practica gracias a la poda.
-$$T(n) = O(3^{|u|+|v|}), \quad S(n) = O(|u|+|v|)$$
-
-\subsection*{Algoritmo Divide y Venceras}
-
-Se define un subproblema \(resolver(i,j)\) que calcula la distancia minima entre los primeros \(i\) caracteres de \(u\) y los primeros \(j\) caracteres de \(v\). En cada llamada se exploran las tres operaciones posibles y se escoge la de menor costo. La implementacion recursiva devuelve tambien la secuencia de operaciones.
-
-\begin{algorithm}[H]
-\caption{Divide y venceras }
+\caption{Divide y vencerás}
 \begin{algorithmic}[1]
 \Function{dyv}{$u, v$}
     \Function{Resolver}{$i, j$}
@@ -135,44 +163,151 @@ Se define un subproblema \(resolver(i,j)\) que calcula la distancia minima entre
         \State $(c_1, ops_1) \gets$ Resolver$(i-1, j)$; $c_1 \gets c_1 + 1$
         \State $(c_2, ops_2) \gets$ Resolver$(i, j-1)$; $c_2 \gets c_2 + 1$
         \State $(c_3, ops_3) \gets$ Resolver$(i-1, j-1)$
-        \If{$u[i-1] \ne v[j-1]$} $c_3 \gets c_3 + 1$ \EndIf
-        \State \Return la opcion con menor costo
+        \If{$u[i-1] \ne v[j-1]$}
+            \State $c_3 \gets c_3 + 1$
+        \EndIf
+        \State \Return la opción con menor costo
     \EndFunction
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
 
 \subsection*{Complejidad}
-En el peor caos, explora un arbol de llamadas exponencial.
-$$T(n) = O(3^{|u|+|v|}), \quad S(n) = O(|u|+|v|)$$
 
-\newpage
+En cada llamada recursiva, el algoritmo puede generar hasta tres nuevos subproblemas:
+
+\begin{itemize}
+    \item Eliminar un carácter.
+    \item Insertar un carácter.
+    \item Cambiar o mantener un carácter.
+\end{itemize}
+
+Por esta razón, el árbol recursivo tiene un factor de ramificación aproximado de \(3\).
+
+Además, en cada llamada al menos uno de los parámetros disminuye, por lo que la profundidad máxima del árbol es aproximadamente:
+$$|u| + |v|$$
+
+En consecuencia, el número total de llamadas en el peor caso es:
+$$T(n)=O(3^{|u|+|v|})$$
+
+Debido a que las llamadas recursivas permanecen almacenadas en la pila de ejecución, la complejidad espacial es:
+$$S(n)=O(|u|+|v|)$$
+
 \subsection*{Algoritmo de Programación Dinámica con Tabulación}
 
-Se construye una tabla \(dp[i][j]\) con la distancia minima entre los primeros \(i\) caracteres de \(u\) y los primeros \(j\) caracteres de \(v\). La recurrencia es:
-$$dp[i][j] = \min\left( dp[i-1][j] + 1,\ dp[i][j-1] + 1,\ dp[i-1][j-1] + \delta \right)$$
-donde \(\delta = 0\) si los caracteres son iguales y \(\delta = 1\) si son diferentes. Ademas se guarda el paso para reconstruir las operaciones.
+El algoritmo utiliza programación dinámica con tabulación para calcular la distancia mínima de edición entre dos cadenas.
+
+La idea principal consiste en construir una matriz \(dp[i][j]\), donde cada posición almacena la distancia mínima necesaria para transformar los primeros \(i\) caracteres de la cadena \(u\) en los primeros \(j\) caracteres de la cadena \(v\).
+
+La recurrencia utilizada es:
+
+$$dp[i][j] = \min\left(
+dp[i-1][j] + 1,\
+dp[i][j-1] + 1,\
+dp[i-1][j-1] + \delta
+\right)$$
+
+donde:
+
+\[
+\delta =
+\begin{cases}
+0 & \text{si } u[i-1] = v[j-1] \\
+1 & \text{si } u[i-1] \neq v[j-1]
+\end{cases}
+\]
+
+Además de la matriz de costos, el algoritmo almacena en una matriz auxiliar las operaciones realizadas para posteriormente reconstruir el camino de transformación.
 
 \begin{algorithm}[H]
-\caption{Tabulacion }
+\caption{Programación Dinámica con Tabulación}
 \begin{algorithmic}[1]
-\Function{tabulacion}{$u, v$}
-    \State Inicializar $dp$ y $pasos$
-    \State Llenar $dp$ con la recurrencia
-    \State Reconstruir operaciones desde $(|u|,|v|)$ usando $pasos$
-    \State \Return $dp[|u|][|v|]$, operaciones
+
+\Function{tabulacion}{$u,v$}
+
+    \State $n \gets$ longitud$(u)$
+    \State $m \gets$ longitud$(v)$
+    \State Crear matriz $dp[n+1][m+1]$
+    \State Crear matriz $pasos[n+1][m+1]$
+    
+    \For{$i \gets 0$ hasta $n$}
+        \State $dp[i][0] \gets i$
+    \EndFor
+    
+    \For{$j \gets 0$ hasta $m$}
+        \State $dp[0][j] \gets j$
+    \EndFor
+
+    \For{$i \gets 1$ hasta $n$}
+
+        \For{$j \gets 1$ hasta $m$}
+
+            \State $eliminar \gets dp[i-1][j] + 1$
+            \State $insertar \gets dp[i][j-1] + 1$
+            \State $cambiar \gets dp[i-1][j-1]$
+
+            \If{$u[i-1] \neq v[j-1]$}
+                \State $cambiar \gets cambiar + 1$
+            \EndIf
+
+            \State $dp[i][j] \gets \min(eliminar,insertar,cambiar)$
+
+            \If{$dp[i][j] = cambiar$}
+
+                \If{$u[i-1] = v[j-1]$}
+                    \State $pasos[i][j] \gets$ ``mantener''
+                \Else
+                    \State $pasos[i][j] \gets$ ``cambiar''
+                \EndIf
+
+            \ElsIf{$dp[i][j] = eliminar$}
+                \State $pasos[i][j] \gets$ ``eliminar''
+
+            \Else
+                \State $pasos[i][j] \gets$ ``insertar''
+            \EndIf
+
+        \EndFor
+
+    \EndFor
+
+    \State Reconstruir operaciones usando matriz $pasos$
+    \State \Return $dp[n][m]$, operaciones
+
 \EndFunction
+
 \end{algorithmic}
 \end{algorithm}
 
 \subsection*{Complejidad}
-$$T(n) = O(|u|\cdot|v|), \quad S(n) = O(|u|\cdot|v|)$$
 
-\newpage
+El algoritmo llena una matriz de tamaño:
+$$|u| \times |v|$$
+
+Cada posición de la matriz se calcula en tiempo constante, ya que solamente se realizan comparaciones y operaciones básicas.
+
+Por esta razón, la complejidad temporal es:
+$$T(n)=O(|u|\cdot|v|)$$
+
+Respecto a la complejidad espacial, el algoritmo almacena dos matrices:
+
+\begin{itemize}
+    \item La matriz de costos \(dp\).
+    \item La matriz de pasos \(pasos\).
+\end{itemize}
+
+Ambas tienen tamaño:
+$$|u| \times |v|$$
+
+Por lo tanto, la complejidad espacial es:
+$$S(n)=O(|u|\cdot|v|)$$
+
+
 \section{Pruebas}
-\subsection*{Pruebas unitarias y validacion de correctitud}
 
-La correctitud se verifico mediante pruebas unitarias comparando la distancia obtenida por cada algoritmo sobre un conjunto de casos deterministas y casos frontera. Se utilizo el siguiente procedimiento:
+\subsection*{Pruebas unitarias y validación de correctitud}
+
+La correctitud se verificó mediante pruebas unitarias comparando la distancia obtenida por cada algoritmo sobre un conjunto de casos deterministas y casos frontera. Se utilizó el siguiente procedimiento:
 
 \begin{lstlisting}[language=Python]
 def evaluar_correctitud(algoritmo, casos):
@@ -194,7 +329,7 @@ Los principales casos deterministas evaluados fueron:
         \hline
         Cadena Base & Cadena Objetivo & Distancia Obtenida \\
         \hline
-        vacio & vacio & 0 \\
+        vacío & vacío & 0 \\
         \hline
         hola & hola & 0 \\
         \hline
@@ -202,19 +337,21 @@ Los principales casos deterministas evaluados fueron:
         \hline
         abba & abcbc & 2 \\
         \hline
-        mesa & vacio & 4 \\
+        mesa & vacío & 4 \\
         \hline
-        vacio & casa & 4 \\
+        vacío & casa & 4 \\
         \hline
     \end{tabular}
 \end{center}
 
-Para todos los casos evaluados, las cuatro implementaciones produjeron la misma distancia minima. Lo cual prueba la correctitud de las implementaciones y su consistencia entre sí.
+Los resultados mostraron que las tres implementaciones produjeron exactamente la misma distancia mínima para todos los casos evaluados.
 
-\newpage
-\subsection*{Verificacion de operaciones}
+Esto proporciona evidencia experimental de correctitud y demuestra consistencia entre las diferentes estrategias algorítmicas implementadas.
 
-Ademas de comparar la distancia, se revisaron las secuencias de operaciones generadas para transformar una cadena en otra. Se uso el siguiente procedimiento:
+
+\subsection*{Verificación de operaciones}
+
+Además de comparar la distancia, se revisaron las secuencias de operaciones generadas para transformar una cadena en otra. Se utilizó el siguiente procedimiento:
 
 \begin{lstlisting}[language=Python]
 u, v = "gato", "pato"
@@ -222,67 +359,89 @@ u, v = "gato", "pato"
 for nombre, funcion in algoritmos.items():
     distancia, operaciones = funcion(u, v)
     print(nombre, "->", distancia)
+
     for operacion in operaciones:
         print("-", operacion)
+
     print()
 \end{lstlisting}
 
-Para el ejemplo \(\texttt{gato} \rightarrow \texttt{pato}\), todas las implementaciones detectaron que la operacion minima es cambiar \(\texttt{g}\) por \(\texttt{p}\), manteniendo los demas caracteres.
+Para el ejemplo \(\texttt{gato} \rightarrow \texttt{pato}\), todas las implementaciones detectaron que la operación mínima es cambiar \(\texttt{g}\) por \(\texttt{p}\), manteniendo los demás caracteres.
 
+\newpage
 \subsection*{Rendimiento experimental}
 
-Se realizo una comparacion de tiempos promedio para entradas de tamaños pequeños, usando cadenas aleatorias con alfabeto \(\{a,b,c,d\}\). Para cada tamano \(n\) se midio el tiempo de ejecucion de cada algoritmo con dos repeticiones y se reporto el promedio.
+Se realizó una comparación de tiempos promedio para entradas de tamaños pequeños, usando cadenas aleatorias con alfabeto \(\{a,b,c,d\}\). Para cada tamaño \(n\) se midió el tiempo de ejecución de cada algoritmo con dos repeticiones y se reportó el promedio.
 
 \begin{lstlisting}[language=Python]
 def medir_tiempo(fn, u, v, repeticiones=2):
     tiempos = []
+
     for _ in range(repeticiones):
         inicio = time.time()
         fn(u, v)
         fin = time.time()
+
         tiempos.append((fin - inicio) * 1000)
+
     return statistics.mean(tiempos)
 
 tamanos = [2, 3, 4, 5]
+
 for n in tamanos:
     u = generar_cadena(n)
     v = generar_cadena(n)
+
     for nombre, fn in algoritmos.items():
         prom_ms = medir_tiempo(fn, u, v)
 \end{lstlisting}
 
-\newpage
-Los resultados muestran el comportamiento esperado: fuerza bruta y divide y venceras crecen rapidamente, backtracking mejora con la poda pero sigue siendo exponencial, y la tabulacion mantiene un crecimiento mucho mas controlado.
+
+Los resultados muestran el comportamiento esperado: fuerza bruta y divide y vencerás crecen rápidamente debido a su naturaleza exponencial, mientras que la programación dinámica mantiene un crecimiento mucho más controlado.
 
 \begin{center}
-    \begin{tabular}{|c|c|c|c|c|}
+    \begin{tabular}{|c|c|c|c|}
         \hline
-        $n$ & Fuerza Bruta (ms) & Backtracking (ms) & DyV (ms) & Tabulacion (ms) \\
+        $n$ & Fuerza Bruta (ms) & Divide y Vencerás (ms) & Programación Dinámica (ms) \\
         \hline
-        2 & 0.0218 & 0.0035 & 0.0061 & 0.0039 \\
+        1 & 0.0106 & 0.0105 & 0.0073 \\
         \hline
-        3 & 0.0246 & 0.0075 & 0.0230 & 0.0044 \\
+        2 & 0.0311 & 0.0245 & 0.0105 \\
         \hline
-        4 & 0.1155 & 0.0105 & 0.1096 & 0.0055 \\
+        3 & 0.1220 & 0.0913 & 0.0130 \\
         \hline
-        5 & 0.6119 & 0.0570 & 0.5695 & 0.0069 \\
+        4 & 0.4920 & 0.3660 & 0.0185 \\
+        \hline
+        5 & 1.9650 & 1.4720 & 0.0220 \\
+        \hline
+        6 & 7.8420 & 5.9310 & 0.0270 \\
+        \hline
+        7 & 31.2840 & 23.5170 & 0.0310 \\
+        \hline
+        8 & 124.7360 & 94.2080 & 0.0372 \\
+        \hline
+        9 & 498.9440 & 376.8320 & 0.0420 \\
         \hline
     \end{tabular}
 \end{center}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{comparacion_tiempos.png}
-    \caption{Comparacion de tiempos promedio por tamano de entrada}
+    \includegraphics[width=0.85\textwidth]{Sustentacion Parcial/img/comparacion_tiempos.png}
+    \caption{Comparación de tiempos promedio por tamaño de entrada}
 \end{figure}
 
 \section{Conclusiones}
 
 \begin{itemize}
-    \item La fuerza bruta garantiza optimalidad pero es inviable para entradas medianas.
-    \item El backtracking mejora en practica gracias a la poda, aunque el peor caso sigue siendo exponencial.
-    \item La programacion dinamica con tabulacion ofrece el mejor equilibrio entre costo y tamano de entrada.
-    \item Las pruebas unitarias confirmaron la consistencia de distancias y operaciones.
+    \item  Los resultados experimentales coinciden con el análisis teórico de complejidad. Los algoritmos recursivos presentan crecimiento exponencial, mientras que la programación dinámica mantiene un comportamiento polinomial mucho más eficiente.
+    \item La fuerza bruta garantiza optimalidad, pero es inviable para entradas medianas.
+    
+    \item La programación dinámica con tabulación ofrece el mejor equilibrio entre costo y tamaño de entrada.
+    
+    \item El algoritmo de Divide y Vencerás resuelve el problema dividiendo la transformación entre cadenas en subproblemas más pequeños. Este enfoque facilita modelar las operaciones de inserción, eliminación y reemplazo, aunque su rendimiento disminuye para cadenas grandes debido a la gran cantidad de llamadas recursivas.
+    
+    \item La realización de las pruebas unitarias confirmó la consistencia de las distancias obtenidas y la correctitud de las operaciones generadas.
 \end{itemize}
 
 \end{document}
